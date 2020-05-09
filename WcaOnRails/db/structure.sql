@@ -73,6 +73,7 @@ CREATE TABLE `Competitions` (
   `announced_by` int(11) DEFAULT NULL,
   `results_posted_by` int(11) DEFAULT NULL,
   `main_event_id` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `score_taking_url` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `year_month_day` (`year`,`month`,`day`),
   KEY `index_Competitions_on_countryId` (`countryId`),
@@ -1645,4 +1646,5 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200304044931'),
 ('20200331082313'),
 ('20200415151734'),
-('20200419133415');
+('20200419133415'),
+('20200509142542');
