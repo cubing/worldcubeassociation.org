@@ -858,6 +858,28 @@ CREATE TABLE `delegate_reports` (
   UNIQUE KEY `index_delegate_reports_on_competition_id` (`competition_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `delegates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `delegates` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `status` varchar(191) NOT NULL,
+  `region_id` bigint(20) NOT NULL,
+  `subregion_id` bigint(20) DEFAULT NULL,
+  `country_iso2` varchar(191) DEFAULT NULL,
+  `location` varchar(191) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_delegates_on_user_id` (`user_id`),
+  KEY `index_delegates_on_region_id` (`region_id`),
+  KEY `index_delegates_on_subregion_id` (`subregion_id`),
+  KEY `index_delegates_on_country_id` (`country_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `eligible_country_iso2s_for_championship`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -1105,6 +1127,18 @@ CREATE TABLE `regional_organizations` (
   KEY `index_regional_organizations_on_country` (`country`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `regions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `regions` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) NOT NULL,
+  `friendly_id` varchar(191) NOT NULL,
+  `is_active` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_regions_on_friendly_id` (`friendly_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `registration_competition_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -1218,6 +1252,19 @@ CREATE TABLE `stripe_charges` (
   PRIMARY KEY (`id`),
   KEY `index_stripe_charges_on_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `subregions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `subregions` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) NOT NULL,
+  `region_id` bigint(20) NOT NULL,
+  `friendly_id` varchar(191) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_subregions_on_region_id` (`region_id`),
+  KEY `index_subregions_on_friendly_id` (`friendly_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `team_members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1645,4 +1692,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200304044931'),
 ('20200331082313'),
 ('20200415151734'),
-('20200419133415');
+('20200419133415'),
+('20200505175219'),
+('20200505175242'),
+('20200505175327');
