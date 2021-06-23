@@ -89,6 +89,7 @@ module DatabaseDumper
           main_event_id
           cancelled_at
           cancelled_by
+          allow_registration_edits
         ),
         db_default: %w(
           connected_stripe_account_id

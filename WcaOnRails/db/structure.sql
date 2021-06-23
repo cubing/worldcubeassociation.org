@@ -75,6 +75,7 @@ CREATE TABLE `Competitions` (
   `main_event_id` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cancelled_at` datetime DEFAULT NULL,
   `cancelled_by` int(11) DEFAULT NULL,
+  `allow_registration_edits` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `year_month_day` (`year`,`month`,`day`),
   KEY `index_Competitions_on_countryId` (`countryId`),
@@ -1699,4 +1700,5 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210129181657'),
 ('20210221190945'),
 ('20210301002636'),
-('20210501213332');
+('20210501213332'),
+('20210521195423');
