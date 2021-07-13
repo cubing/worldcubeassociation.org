@@ -1,0 +1,8 @@
+<% provide(:title, "Add a result") %>
+<% add_to_packs("edit_results") %>
+
+<%= render layout: 'competitions/nav' do %>
+  <%= render_react_component("NewResult", options: {
+    result: @result,
+  }) %>
+<% end %>

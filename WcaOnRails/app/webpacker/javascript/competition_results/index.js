@@ -1,80 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { Table } from 'semantic-ui-react';
-import cn from 'classnames';
+import { Button, Icon, Table } from 'semantic-ui-react';
 import useLoadedData from '../hooks/useLoadedData';
 import { registerComponent } from '../wca/react-utils';
 import Loading from '../requests/Loading';
 import Errored from '../requests/Errored';
-import {
-  formatAttemptResult,
-  formatAttemptsForResult,
-} from '../wca-live/attempts';
-import CountryFlag from '../wca/CountryFlag';
 import './index.scss';
 import EventNavigation from '../event_navigation';
+import ResultRow from './ResultRow';
+import ResultRowHeader from './ResultRowHeader';
 import { getUrlParams, setUrlParams } from '../wca/utils';
-import { personUrl, competitionApiUrl, competitionEventResultsApiUrl } from '../requests/routes.js.erb';
-import I18n from '../i18n';
+import {
+  newResultUrl, competitionApiUrl, competitionEventResultsApiUrl,
+} from '../requests/routes.js.erb';
 
-const getRecordClass = (record) => {
-  switch (record) {
-    case null:
-      return '';
-    case 'WR': // Intentional fallthrough
-    case 'NR':
-      return record;
-    default:
-      return 'CR';
-  }
-};
-
-const RoundResultsTable = ({ round, eventName, eventId }) => (
+const RoundResultsTable = ({ round, competitionId, canAdminResults }) => (
   <>
-    <h2>{`${eventName} ${round.name}`}</h2>
+    <h2>{round.name}</h2>
+    {canAdminResults && (
+      <Button positive as="a" href={newResultUrl(competitionId, round.id)} size="tiny">
+        <Icon name="plus" />
+        Add a result to this round
+      </Button>
+    )}
     <Table striped>
       <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell width={1}>#</Table.HeaderCell>
-          <Table.HeaderCell width={4}>
-            {I18n.t('competitions.results_table.name')}
-          </Table.HeaderCell>
-          <Table.HeaderCell>{I18n.t('common.best')}</Table.HeaderCell>
-          <Table.HeaderCell />
-          <Table.HeaderCell>{I18n.t('common.average')}</Table.HeaderCell>
-          <Table.HeaderCell />
-          <Table.HeaderCell>{I18n.t('common.user.citizen_of')}</Table.HeaderCell>
-          <Table.HeaderCell>{I18n.t('common.solves')}</Table.HeaderCell>
-        </Table.Row>
+        <ResultRowHeader />
       </Table.Header>
       <Table.Body>
         {round.results.map((result, index, results) => (
-          <Table.Row key={result.id}>
-            <Table.Cell className={cn({ 'text-muted': index > 0 && results[index - 1].pos === result.pos })}>
-              {result.pos}
-            </Table.Cell>
-            <Table.Cell>
-              <a href={personUrl(result.wca_id)}>{`${result.name}`}</a>
-            </Table.Cell>
-            <Table.Cell className={getRecordClass(result.regional_single_record)}>
-              {formatAttemptResult(result.best, eventId)}
-            </Table.Cell>
-            <Table.Cell>{result.regional_single_record}</Table.Cell>
-            <Table.Cell className={getRecordClass(result.regional_average_record)}>
-              {formatAttemptResult(result.average, eventId)}
-            </Table.Cell>
-            <Table.Cell>{result.regional_average_record}</Table.Cell>
-            <Table.Cell><CountryFlag iso2={result.country_iso2} /></Table.Cell>
-            <Table.Cell className="table-cell-solves">
-              {formatAttemptsForResult(result, eventId)}
-            </Table.Cell>
-          </Table.Row>
+          <ResultRow
+            key={result.id}
+            result={result}
+            results={results}
+            index={index}
+            canAdminResults={canAdminResults}
+          />
         ))}
       </Table.Body>
     </Table>
   </>
 );
 
-const EventResults = ({ competitionId, eventId }) => {
+const EventResults = ({ competitionId, eventId, canAdminResults }) => {
   const { loading, error, data } = useLoadedData(
     competitionEventResultsApiUrl(competitionId, eventId),
   );
@@ -84,13 +51,18 @@ const EventResults = ({ competitionId, eventId }) => {
   return (
     <div className="event-results">
       {data.rounds.map((round) => (
-        <RoundResultsTable key={round.id} round={round} eventName={data.name} eventId={data.id} />
+        <RoundResultsTable
+          key={round.id}
+          round={round}
+          competitionId={competitionId}
+          canAdminResults={canAdminResults}
+        />
       ))}
     </div>
   );
 };
 
-const CompetitionResults = ({ competitionId }) => {
+const CompetitionResults = ({ competitionId, canAdminResults }) => {
   const { loading, error, data } = useLoadedData(competitionApiUrl(competitionId));
   const [selectedEvent, setSelectedEvent] = useState(null);
   useEffect(() => {
@@ -125,6 +97,7 @@ const CompetitionResults = ({ competitionId }) => {
           <EventResults
             competitionId={competitionId}
             eventId={selectedEvent}
+            canAdminResults={canAdminResults}
           />
         )}
       <EventNavigation

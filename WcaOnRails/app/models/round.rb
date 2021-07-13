@@ -214,4 +214,14 @@ class Round < ApplicationRecord
   def self.name_from_attributes(event, round_type)
     I18n.t("round.name", event_name: event.name, round_name: round_type.name)
   end
+
+  # Find a matching round the given (competition_id, event_id, round_type_id)
+  # tuple.
+  def self.find_for(competition_id, event_id, round_type_id)
+    Competition.find_by(id: competition_id)
+               &.competition_events
+               &.find { |ce| ce.event_id == event_id }
+               &.rounds
+               &.find { |r| r.round_type_id == round_type_id }
+  end
 end

@@ -1,5 +1,11 @@
 export const personUrl = (wcaId) => `<%= URI.decode(Rails.application.routes.url_helpers.person_path("${wcaId}"))%>`;
 
+export const personsUrl = `<%= URI.decode(Rails.application.routes.url_helpers.persons_path) %>`;
+
+export const newResultUrl = (competitionId, roundId) => `<%= URI.decode(Rails.application.routes.url_helpers.new_result_path("${competitionId}", "${roundId}"))%>`;
+export const resultUrl = (id) => `<%= URI.decode(Rails.application.routes.url_helpers.result_path("${id}"))%>`;
+export const editResultUrl = (id) => `<%= URI.decode(Rails.application.routes.url_helpers.edit_result_path("${id}"))%>`;
+
 export const postsUrl = (page, format = 'json') => {
   // In this case id holds the page number ;)
   return `<%= URI.decode(Rails.application.routes.url_helpers.posts_path(format: "${format}")) %>?page=${page}`;
@@ -14,3 +20,11 @@ export const omnisearchApiUrl = (query) => `<%= Rails.application.routes.url_hel
 export const userSearchApiUrl = (query) => `<%= Rails.application.routes.url_helpers.api_v0_search_users_path %>?q=${query}`;
 
 export const competitionEventScramblesApiUrl = (id, eventId) => `<%= URI.decode(Rails.application.routes.url_helpers.api_v0_competition_event_scrambles_path("${id}", "${eventId}")) %>`;
+
+export const adminCheckExistingResultsUrl = (competitionId) => `<%= URI.decode(Rails.application.routes.url_helpers.competition_admin_check_existing_results_path("${competitionId}")) %>`;
+
+export const adminCADUrl = `<%= URI.decode(Rails.application.routes.url_helpers.admin_compute_auxiliary_data_path) %>`;
+
+export const adminGenerateIds = `<%= URI.decode(Rails.application.routes.url_helpers.persons_new_id_path) %>`;
+
+export const personApiUrl = (wcaId) => `<%= URI.decode(Rails.application.routes.url_helpers.api_v0_person_path("${wcaId}"))%>`;

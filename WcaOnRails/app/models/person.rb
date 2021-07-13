@@ -21,7 +21,14 @@ class Person < ApplicationRecord
   }
 
   validates :name, presence: true
-  validates :countryId, presence: true
+  validates_inclusion_of :countryId, in: Country.real.map(&:id).freeze
+
+  # If creating a branch new person (ie: with subId equal to 1), then the
+  # WCA ID must be unique.
+  # Note: in general WCA ID are not unique in the table, as one person with
+  # the same WCA ID may have multiple subIds (eg: if they changed nationality).
+  validates_uniqueness_of :wca_id, if: -> { new_record? && subId == 1 }
+  validates_format_of :wca_id, with: /\A[1-9][[:digit:]]{3}[[:upper:]]{4}[[:digit:]]{2}\z/
 
   before_validation :unpack_dob
   private def unpack_dob
@@ -48,6 +55,13 @@ class Person < ApplicationRecord
   private def dob_must_be_in_the_past
     if dob && dob >= Date.today
       errors.add(:dob, I18n.t('users.errors.dob_past'))
+    end
+  end
+
+  validate :dob_must_be_valid
+  private def dob_must_be_valid
+    unless dob
+      errors.add(:dob, I18n.t('errors.messages.invalid'))
     end
   end
 

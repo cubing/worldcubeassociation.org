@@ -90,6 +90,9 @@ Rails.application.routes.draw do
   get 'competitions/edit/time_until_competition' => 'competitions#time_until_competition', as: :time_until_competition
   get 'competitions/:id/edit/clone_competition' => 'competitions#clone_competition', as: :clone_competition
 
+  # /results can be both public (for rankings and records), or used for managing
+  # results records.
+  get 'results', to: redirect('results/rankings/333/single', status: 302)
   get 'results/rankings', to: redirect('results/rankings/333/single', status: 302)
   get 'results/rankings/333mbf/average',
       to: redirect(status: 302) { |params, request| URI.parse(request.original_url).query ? "results/rankings/333mbf/single?#{URI.parse(request.original_url).query}" : "results/rankings/333mbf/single" }
@@ -97,10 +100,20 @@ Rails.application.routes.draw do
   get 'results/rankings/:event_id/:type' => 'results#rankings', as: :rankings
   get 'results/records' => 'results#records', as: :records
 
+  # It's important that these routes appears after the one above, as we want
+  # routes such as results/rankings to redirect to the ranking method.
+  # If they don't, 'rankings' would be considered as a result id and attempt
+  # to show the admin-only "edit result" page.
+  resources :results, except: [:index, :new], controller: 'admin/results'
+  get 'results/:competition_id/:round_id/new' => 'admin/results#new', as: :new_result
+  post 'results' => 'admin/results#create'
+
   get "media/validate" => 'media#validate', as: :validate_media
   resources :media, only: [:index, :new, :create, :edit, :update, :destroy]
 
+  get 'persons/new_id' => 'admin/persons#generate_ids'
   resources :persons, only: [:index, :show]
+  post 'persons' => 'admin/persons#create'
 
   resources :polls, only: [:edit, :new, :vote, :create, :update, :index, :destroy]
   get 'polls/:id/vote' => 'votes#vote', as: 'polls_vote'
@@ -180,6 +193,7 @@ Rails.application.routes.draw do
   post '/admin/merge_people' => 'admin#do_merge_people'
   get '/admin/edit_person' => 'admin#edit_person'
   patch '/admin/update_person' => 'admin#update_person'
+  delete '/admin/destroy_person' => 'admin/persons#destroy'
   get '/admin/person_data' => 'admin#person_data'
   get '/admin/compute_auxiliary_data' => 'admin#compute_auxiliary_data'
   get '/admin/do_compute_auxiliary_data' => 'admin#do_compute_auxiliary_data'
