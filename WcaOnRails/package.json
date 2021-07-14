@@ -46,6 +46,7 @@
     "rails-erb-loader": "^5.5.2",
     "react": "^16.14.0",
     "react-bootstrap": "^0.33.1",
+    "react-datepicker": "^4.1.1",
     "react-dom": "^16.14.0",
     "react-leaflet": "^2.8.0",
     "regenerator-runtime": "^0.13.5",

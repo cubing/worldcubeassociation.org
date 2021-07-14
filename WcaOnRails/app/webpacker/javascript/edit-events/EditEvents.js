@@ -8,7 +8,7 @@ import formats from '../wca/formats.js.erb'
 import { rootRender } from '.'
 import { pluralize } from './modals/utils'
 import { buildActivityCode, saveWcif, roundIdToString } from '../wca/wcif-utils'
-import { EditTimeLimitButton, EditCutoffButton, EditAdvancementConditionButton } from './modals'
+import { EditTimeLimitButton, EditCutoffButton, EditAdvancementConditionButton, EditQualificationButton } from './modals'
 
 export default class EditEvents extends React.Component {
   save = e => {
@@ -154,6 +154,9 @@ function RoundsTable({ wcifEvents, wcifEvent, disabled }) {
           })}
         </tbody>
       </table>
+      <h5>
+        Qualification: <EditQualificationButton wcifEvent={wcifEvent} disabled={disabled} />
+      </h5>
     </div>
   );
 }

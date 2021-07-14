@@ -367,6 +367,7 @@ module DatabaseDumper
           competition_id
           event_id
           fee_lowest_denomination
+          qualification
         ),
       ),
     }.freeze,
